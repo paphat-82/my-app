@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.fullname }}
+  labels:
+    app: {{ .Values.fullname }}
+    environment: production
+  annotations:
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  strategy:
+    {{- toYaml .Values.deploymentStrategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fullname }}
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullname }}
+        environment: production
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name | default "default" }}
+      containers:
+        - name: {{ .Values.fullname }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.containers.containerPort }}
+              protocol: TCP
+          env:
+            {{- with .Values.containers.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.containers.livenessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.containers.startupProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.containers.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.containers.resources | nindent 12 }}
+      volumes:
+        {{- with .Values.volumes.add_volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      nodeSelector:
+        {{- with .Values.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      affinity:
+        {{- with .Values.affinity }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      tolerations:
+        {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}

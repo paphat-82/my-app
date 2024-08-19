@@ -1,0 +1,65 @@
+namespace: node92
+fullname: my-app
+replicaCount: 2
+revisionHistoryLimit: 10
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+image:
+  repository: docker.io/paphat82/react-api
+  tag: ""
+  pullPolicy: IfNotPresent
+containers:
+  containerPort: 80
+  env:
+    - name: TZ
+      value: "Asia/Bangkok"
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  startupProbe:
+    httpGet:
+      path: /health
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  resources:
+    limits:
+      memory: 3Gi
+      cpu: '1'
+    requests:
+      memory: 50Mi
+      cpu: 50m
+volumes: {}
+nodeSelector: {}
+affinity: {}
+tolerations: []
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+
+
+serviceAccount:
+  create: false
+  use_existing: false
+  name: ""
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    cpu:
+      averageUtilization: 40
