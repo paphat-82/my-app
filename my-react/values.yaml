@@ -1,4 +1,4 @@
-namespace: node92
+namespace: react
 fullname: my-app
 replicaCount: 2
 revisionHistoryLimit: 10
