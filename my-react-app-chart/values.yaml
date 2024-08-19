@@ -1,0 +1,25 @@
+image:
+  repository: docker.io/paphat82/react-api
+  tag: v1
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingress:
+  enabled: true
+  nginx:
+    host:
+      - "my-react-app.example.com"
+  tls: []
+  pathType: ImplementationSpecific
+
+resources: {}
+
+
+resources: {}
+
+serviceAccount:
+  create: true
+  name: ""
