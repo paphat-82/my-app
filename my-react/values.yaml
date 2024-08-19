@@ -16,24 +16,6 @@ containers:
   env:
     - name: TZ
       value: "Asia/Bangkok"
-  livenessProbe:
-    httpGet:
-      path: /health
-      port: 80
-    initialDelaySeconds: 30
-    periodSeconds: 10
-  startupProbe:
-    httpGet:
-      path: /health
-      port: 80
-    initialDelaySeconds: 30
-    periodSeconds: 10
-  readinessProbe:
-    httpGet:
-      path: /health
-      port: 80
-    initialDelaySeconds: 5
-    periodSeconds: 10
   resources:
     limits:
       memory: 3Gi
@@ -50,7 +32,6 @@ service:
   enabled: true
   type: ClusterIP
   port: 80
-
 
 serviceAccount:
   create: false
