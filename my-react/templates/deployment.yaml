@@ -4,30 +4,34 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: {{ .Values.fullname }}
   labels:
-    app: {{ .Values.fullname }}
-    environment: production
-  annotations:
-    meta.helm.sh/release-name: {{ .Release.Name }}
-    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+    {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   strategy:
-    {{- toYaml .Values.deploymentStrategy | nindent 4 }}
+    {{- with .Values.deploymentStrategy }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   selector:
     matchLabels:
-      app: {{ .Values.fullname }}
-      environment: production
+      {{- with .Values.selector.matchLabels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
   template:
     metadata:
       labels:
-        app: {{ .Values.fullname }}
-        environment: production
+        {{- with .Values.template.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name | default "default" }}
+      {{- if or .Values.serviceAccount.create .Values.serviceAccount.use_existing }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
       containers:
         - name: {{ .Values.fullname }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.containers.containerPort }}
@@ -36,16 +40,12 @@ spec:
             {{- with .Values.containers.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          livenessProbe:
-            {{- toYaml .Values.containers.livenessProbe | nindent 12 }}
-          startupProbe:
-            {{- toYaml .Values.containers.startupProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.containers.readinessProbe | nindent 12 }}
           resources:
-            {{- toYaml .Values.containers.resources | nindent 12 }}
+            {{- with .Values.containers.resources }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
-        {{- with .Values.volumes.add_volumes }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       nodeSelector:

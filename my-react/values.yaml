@@ -1,16 +1,46 @@
+# Namespace where the deployment will be created
 namespace: react
+
+# Name of the application
 fullname: my-app
+
+# Number of replicas
 replicaCount: 2
+
+# History limit of revisions
 revisionHistoryLimit: 10
+
+# Deployment strategy
 deploymentStrategy:
   type: RollingUpdate
   rollingUpdate:
-    maxSurge: 1
     maxUnavailable: 1
+    maxSurge: 1
+
+# Labels for the deployment and pods
+labels:
+  app: my-app
+  environment: production
+
+# Selector and Labels for the deployment and pods
+selector:
+  matchLabels:
+    app: my-app
+    environment: production
+
+# Template labels for the deployment and pods
+template:
+  labels:
+    app: my-app
+    environment: production
+
+# Image configuration
 image:
   repository: docker.io/paphat82/react-api
-  tag: ""
+  tag: v8
   pullPolicy: IfNotPresent
+
+# Container configuration
 containers:
   containerPort: 80
   env:
@@ -23,6 +53,7 @@ containers:
     requests:
       memory: 50Mi
       cpu: 50m
+
 volumes: {}
 nodeSelector: {}
 affinity: {}
@@ -32,12 +63,16 @@ service:
   enabled: true
   type: ClusterIP
   port: 80
+  labels:
+    app: my-app
+  containerPort: 80
 
 serviceAccount:
   create: false
   use_existing: false
   name: ""
 
+# HPA configuration
 hpa:
   minReplicas: 1
   maxReplicas: 10
