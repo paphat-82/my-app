@@ -37,7 +37,7 @@ template:
 # Image configuration
 image:
   repository: docker.io/paphat82/react-api
-  tag: v10
+  tag: v9
   pullPolicy: IfNotPresent
 
 # Container configuration
