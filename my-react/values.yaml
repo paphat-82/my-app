@@ -75,7 +75,7 @@ serviceAccount:
 # HPA configuration
 hpa:
   minReplicas: 1
-  maxReplicas: 10
+  maxReplicas: 5
   metrics:
     cpu:
-      averageUtilization: 40
+      averageUtilization: 2
