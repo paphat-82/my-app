@@ -78,4 +78,4 @@ hpa:
   maxReplicas: 5
   metrics:
     cpu:
-      averageUtilization: 2
+      averageUtilization: 50
