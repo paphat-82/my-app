@@ -5,7 +5,7 @@ namespace: react
 fullname: my-app
 
 # Number of replicas
-replicaCount: 2
+replicaCount: 1
 
 # History limit of revisions
 revisionHistoryLimit: 10
